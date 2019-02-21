@@ -45,7 +45,6 @@ func main() {
 	signal := time.Tick(dur)
 
 	buf := new(bytes.Buffer)
-	enc := gob.NewEncoder(buf)
 
 	for range signal {
 		calcValue()
@@ -56,7 +55,8 @@ func main() {
 			Timestamp: time.Now(),
 		}
 
-		buf.Reset()
+		enc := gob.NewEncoder(buf)
+
 		_ = enc.Encode(reading)
 
 		msg := amqp.Publishing{
@@ -66,6 +66,8 @@ func main() {
 		_ = ch.Publish("", dataQueue.Name, false, false, msg)
 
 		log.Printf("%s Reading Sent. Value: %v\n", *name, value)
+
+		buf.Reset()
 
 	}
 }
