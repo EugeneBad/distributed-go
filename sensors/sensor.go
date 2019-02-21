@@ -33,6 +33,13 @@ func main() {
 
 	dataQueue := qutils.GetQueue(*name, ch)
 
+	//////////////////////////-----------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+	// Create central queue to hold names of each queue created by a sensor
+	//sensorQueue := qutils.GetQueue(qutils.SensorListQueue, ch)
+	msg := amqp.Publishing{Body: []byte(dataQueue.Name)}
+	_ = ch.Publish("amq.fanout", "", false, false, msg)
+	//////////////////////////-----------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
 	dur, _ := time.ParseDuration(strconv.Itoa(1000/int(*freq)) + "ms")
 
 	signal := time.Tick(dur)
@@ -50,13 +57,13 @@ func main() {
 		}
 
 		buf.Reset()
-		enc.Encode(reading)
+		_ = enc.Encode(reading)
 
 		msg := amqp.Publishing{
 			Body: buf.Bytes(),
 		}
 
-		ch.Publish("", dataQueue.Name, false, false, msg)
+		_ = ch.Publish("", dataQueue.Name, false, false, msg)
 
 		log.Printf("%s Reading Sent. Value: %v\n", *name, value)
 
