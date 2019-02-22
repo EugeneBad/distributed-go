@@ -7,6 +7,7 @@ import (
 )
 
 const SensorDiscoveryExchange = "SensorDiscovery"
+const PersistentReadingsQueue = "PersistentReadings"
 
 func GetChannel(url string) (*amqp.Connection, *amqp.Channel) {
 	conn, err := amqp.Dial(url)
