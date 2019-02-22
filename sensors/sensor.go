@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"flag"
+	"fmt"
 	"github.com/distributed-go/dto"
 	"github.com/distributed-go/qutils"
 	"github.com/streadway/amqp"
@@ -36,8 +37,17 @@ func main() {
 	//////////////////////////-----------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	// Create central queue to hold names of each queue created by a sensor
 	//sensorQueue := qutils.GetQueue(qutils.SensorListQueue, ch)
-	msg := amqp.Publishing{Body: []byte(dataQueue.Name)}
-	_ = ch.Publish("amq.fanout", "", false, false, msg)
+	publishQueueName(ch)
+	discoveryQueue := qutils.GetQueue("", ch)
+
+	_ = ch.QueueBind(
+		discoveryQueue.Name,
+		"",
+		qutils.SensorDiscoveryExchange,
+		false,
+		nil)
+
+	go listenForDiscoverRequests(discoveryQueue.Name, ch)
 	//////////////////////////-----------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	dur, _ := time.ParseDuration(strconv.Itoa(1000/int(*freq)) + "ms")
@@ -83,4 +93,18 @@ func calcValue() {
 	}
 
 	value += r.Float64()*(maxStep-minStep) + minStep
+}
+
+func publishQueueName(ch *amqp.Channel) {
+	msg := amqp.Publishing{Body: []byte(*name)}
+	_ = ch.Publish("amq.fanout", "", false, false, msg)
+}
+
+func listenForDiscoverRequests(name string, ch *amqp.Channel) {
+	msgs, _ := ch.Consume(name, "", true, false, false, false, nil)
+
+	for range msgs {
+		fmt.Print("Received discovery request")
+		publishQueueName(ch)
+	}
 }

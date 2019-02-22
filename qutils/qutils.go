@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-const SensorListQueue = "SensorList"
+const SensorDiscoveryExchange = "SensorDiscovery"
 
 func GetChannel(url string) (*amqp.Connection, *amqp.Channel) {
 	conn, err := amqp.Dial(url)
