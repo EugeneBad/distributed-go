@@ -6,7 +6,7 @@ type EventAggregator struct {
 	listeners map[string][]func(EventData)
 }
 
-func NewEventAggregato() *EventAggregator {
+func NewEventAggregator() *EventAggregator {
 	ea := EventAggregator{
 		listeners: make(map[string][]func(EventData)),
 	}

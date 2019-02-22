@@ -32,13 +32,13 @@ func main() {
 	defer conn.Close()
 	defer ch.Close()
 
-	dataQueue := qutils.GetQueue(*name, ch)
+	dataQueue := qutils.GetQueue(*name, ch, false)
 
 	//////////////////////////-----------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	// Create central queue to hold names of each queue created by a sensor
 	//sensorQueue := qutils.GetQueue(qutils.SensorListQueue, ch)
 	publishQueueName(ch)
-	discoveryQueue := qutils.GetQueue("", ch)
+	discoveryQueue := qutils.GetQueue("", ch, true)
 
 	_ = ch.QueueBind(
 		discoveryQueue.Name,

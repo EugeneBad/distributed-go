@@ -23,7 +23,7 @@ func NewQueueListener() *QueueListener {
 
 	ql.conn, ql.ch = qutils.GetChannel(url)
 	ql.sources = map[string]<-chan amqp.Delivery{}
-	ql.ea = NewEventAggregato()
+	ql.ea = NewEventAggregator()
 	return &ql
 }
 
@@ -41,7 +41,7 @@ func (ql *QueueListener) DiscoverSensor() {
 }
 
 func (ql *QueueListener) ListenForNewSource() {
-	q := qutils.GetQueue("", ql.ch)
+	q := qutils.GetQueue("", ql.ch, true)
 
 	_ = ql.ch.QueueBind(
 		q.Name,
