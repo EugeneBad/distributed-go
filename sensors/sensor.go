@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-var url = "amqp://guest@localhost:5672"
+var url = qutils.BrokerUrl
 var name = flag.String("name", "sensor", "name of the sensor")
 var freq = flag.Uint("freq", 5, "frequency in cycle/sec")
 var max = flag.Float64("max", 5., "maximum value for generated reading")
