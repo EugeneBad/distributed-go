@@ -1,0 +1,11 @@
+version: '3'
+services:
+  boiler-temp:
+    build:
+      context: ./sensors
+      args:
+        name: "boiler-temp"
+        freq: "5"
+        max: "450.0"
+        min: "250.0"
+        step: "9.0"
