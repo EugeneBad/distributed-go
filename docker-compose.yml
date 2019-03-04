@@ -1,5 +1,12 @@
 version: '3'
 services:
+  rabbit:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "5671:5671"
+
   boiler-temp:
     build:
       context: ./sensors
@@ -9,11 +16,4 @@ services:
       MAX: "450.0"
       MIN: "250.0"
       STEP: "9.0"
-
-
-  rabbit:
-    image: rabbitmq:3-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-      - "5671:5671"
+    restart: on-failure
