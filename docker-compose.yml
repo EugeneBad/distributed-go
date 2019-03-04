@@ -3,9 +3,17 @@ services:
   boiler-temp:
     build:
       context: ./sensors
-      args:
-        name: "boiler-temp"
-        freq: "5"
-        max: "450.0"
-        min: "250.0"
-        step: "9.0"
+    environment:
+      NAME: "boiler-temp"
+      FREQ: "5"
+      MAX: "450.0"
+      MIN: "250.0"
+      STEP: "9.0"
+
+
+  rabbit:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "5671:5671"

@@ -1,9 +1,4 @@
 FROM golang
-ARG name
-ARG freq
-ARG min
-ARG max
-ARG step
 WORKDIR /go/src/app
 COPY sensors .
-ENTRYPOINT ["./sensors", "--name", "$name", "--freq", "$freq", "--min", "$min", "--max", "$max", "--step", "$step"]
+ENTRYPOINT ./sensors --name $NAME --freq $FREQ --min $MIN --max $MAX --step $STEP

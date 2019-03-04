@@ -2,13 +2,13 @@
 
 build_sensors() {
     cd $(pwd)/sensors
-    go build
+    GOOS=linux GOARCH=amd64 go build
     cd -
 }
 
 build_coordinator() {
     cd $(pwd)/coordinator/exec
-    go build
+    GOOS=linux GOARCH=amd64 go build
     cd -
 }
 
