@@ -42,6 +42,15 @@ func main() {
 	publishQueueName(ch)
 	discoveryQueue := qutils.GetQueue("", ch, true)
 
+	_ = ch.ExchangeDeclare(
+		qutils.SensorDiscoveryExchange,
+		"fanout",
+		false,
+		false,
+		false,
+		false,
+		nil)
+
 	_ = ch.QueueBind(
 		discoveryQueue.Name,
 		"",
