@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/distributed-go/coordinator"
+	"time"
 )
 
 func main() {
@@ -12,6 +12,7 @@ func main() {
 	ql := coordinator.NewQueueListener(ea)
 	go ql.ListenForNewSource()
 
-	var a string
-	_, _ = fmt.Scanln(&a)
+	for range time.Tick(time.Minute) {
+
+	}
 }

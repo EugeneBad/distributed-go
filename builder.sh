@@ -8,7 +8,7 @@ build_sensors() {
 
 build_coordinator() {
     cd $(pwd)/coordinator/exec
-    GOOS=linux GOARCH=amd64 go build
+    GOOS=linux GOARCH=amd64 go build -o coordinator
     cd -
 }
 

@@ -1,4 +1,4 @@
 FROM golang
 WORKDIR /go/src/app
-COPY coordinator .
+COPY exec/coordinator .
 ENTRYPOINT ./coordinator
