@@ -9,7 +9,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-const url = "amqp://guest@localhost:5672"
+const url = qutils.BrokerUrl
 
 type QueueListener struct {
 	conn    *amqp.Connection

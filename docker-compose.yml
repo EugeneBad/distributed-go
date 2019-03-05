@@ -7,6 +7,11 @@ services:
       - "5672:5672"
       - "5671:5671"
 
+  coordinator:
+    build:
+      context: ./coordinator/exec
+    restart: on-failure
+
   boiler-temp:
     build:
       context: ./sensors

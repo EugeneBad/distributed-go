@@ -18,7 +18,7 @@ docker_compose(){
 
 main (){
     build_sensors
-    # build_coordinator
+    build_coordinator
     docker_compose
 }
 
