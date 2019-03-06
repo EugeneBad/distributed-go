@@ -49,7 +49,7 @@ services:
     build:
       context: ./sensors
     environment:
-      NAME: "boiler-temp"
+      NAME: "boiler-mixer"
       FREQ: "5"
       MAX: "150.0"
       MIN: "90.0"
