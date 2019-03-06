@@ -9,3 +9,28 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['rabbit:9090']
+
+  - job_name: boiler-temp-runtime
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['boiler-temp:2112']
+
+  - job_name: boiler-pressure-runtime
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['boiler-pressure:2112']
+
+  - job_name: boiler-current-runtime
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['boiler-current:2112']
+
+  - job_name: boiler-mixer-runtime
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['boiler-mixer:2112']
+
+  - job_name: coordinator-runtime
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['coordinator:2112']

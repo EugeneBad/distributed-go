@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/distributed-go/dto"
+	"github.com/distributed-go/monitoring"
 	"github.com/distributed-go/qutils"
 	"github.com/streadway/amqp"
 	"log"
@@ -26,6 +27,7 @@ var value float64
 var nom float64
 
 func main() {
+	go monitoring.RuntimeMetricExporter()
 	flag.Parse()
 	value = r.Float64()*(*max-*min) + *min
 	nom = (*max-*min)/2 + *min
