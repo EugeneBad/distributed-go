@@ -60,3 +60,10 @@ services:
   rabbit-exporter:
     image: kbudde/rabbitmq-exporter
     network_mode: "service:rabbit"
+    restart: on-failure
+
+  prometheus:
+    build:
+      context: ./monitoring
+    ports:
+      - "9091:9090"
