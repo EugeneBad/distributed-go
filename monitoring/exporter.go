@@ -6,6 +6,6 @@ import (
 )
 
 func RuntimeMetricExporter() {
-	http.Handle("/metrics", promhttp.Handler())
+	http.Handle("/runtime-metrics", promhttp.Handler())
 	_ = http.ListenAndServe(":2112", nil)
 }
