@@ -27,42 +27,45 @@ func NewDatabaseConsumer(er EventRaiser) *DatabaseConsumer {
 	dc.queue = qutils.GetQueue(qutils.PersistentReadingsQueue, dc.ch, false)
 
 	dc.er.AddListener("DataSourceDiscovered", func(eventData interface{}) {
-		dc.SubscibeToDataEvent(eventData.(string))
+		dc.SubscribeToDataEvent(eventData.(string))
 	})
 	return &dc
 }
 
-func (dc *DatabaseConsumer) SubscibeToDataEvent(eventName string) {
+func (dc *DatabaseConsumer) SubscribeToDataEvent(eventName string) {
 	for _, v := range dc.sources {
 		if v == eventName {
 			return
 		}
 	}
+	callback := dc.callbackGenerator()
 
-	dc.er.AddListener("MessageReceived_"+eventName, func() func(interface{}) {
-		prevTime := time.Unix(0, 0)
-		buf := new(bytes.Buffer)
+	dc.er.AddListener("MessageReceived_"+eventName, callback)
+}
 
-		return func(eventData interface{}) {
-			ed := eventData.(EventData)
-			if time.Since(prevTime) > maxRate {
-				prevTime = time.Now()
+func (dc *DatabaseConsumer) callbackGenerator() func(interface{}) {
+	prevTime := time.Unix(0, 0)
+	buf := new(bytes.Buffer)
 
-				sm := dto.SensorMessage{
-					Name:      ed.Name,
-					Value:     ed.Value,
-					Timestamp: ed.Timestamp,
-				}
-				buf.Reset()
-				enc := gob.NewEncoder(buf)
-				_ = enc.Encode(sm)
+	return func(eventData interface{}) {
+		ed := eventData.(EventData)
+		if time.Since(prevTime) > maxRate {
+			prevTime = time.Now()
 
-				msg := amqp.Publishing{
-					Body: buf.Bytes(),
-				}
-
-				_ = dc.ch.Publish("", qutils.PersistentReadingsQueue, false, false, msg)
+			sm := dto.SensorMessage{
+				Name:      ed.Name,
+				Value:     ed.Value,
+				Timestamp: ed.Timestamp,
 			}
+			buf.Reset()
+			enc := gob.NewEncoder(buf)
+			_ = enc.Encode(sm)
+
+			msg := amqp.Publishing{
+				Body: buf.Bytes(),
+			}
+
+			_ = dc.ch.Publish("", qutils.PersistentReadingsQueue, false, false, msg)
 		}
-	}())
+	}
 }
