@@ -26,7 +26,7 @@ func NewReadingCounter() ReadingCounterInterface {
 }
 
 func (rc *ReadingCounter) Increment(layer, sensor string) {
-	rc.With(prometheus.Labels{"sensor": sensor})
+	rc.With(prometheus.Labels{"layer": layer, "sensor": sensor}).Inc()
 }
 
 func MetricExporter() {

@@ -10,6 +10,7 @@ import (
 )
 
 type MetricConsumer struct {
+	rc      monitoring.ReadingCounterInterface
 	er      EventRaiser
 	conn    *amqp.Connection
 	ch      *amqp.Channel
@@ -17,17 +18,18 @@ type MetricConsumer struct {
 	sources []string
 }
 
-func NewMetricConsumer(er EventRaiser) *DatabaseConsumer {
-	dc := DatabaseConsumer{
+func NewMetricConsumer(er EventRaiser) *MetricConsumer {
+	mc := MetricConsumer{
 		er: er,
+		rc: monitoring.NewReadingCounter(),
 	}
-	dc.conn, dc.ch = qutils.GetChannel(url)
-	dc.queue = qutils.GetQueue(qutils.LiveReadingsQueue, dc.ch, false)
+	mc.conn, mc.ch = qutils.GetChannel(url)
+	mc.queue = qutils.GetQueue(qutils.LiveReadingsQueue, mc.ch, false)
 
-	dc.er.AddListener("DataSourceDiscovered", func(eventData interface{}) {
-		dc.SubscribeToDataEvent(eventData.(string))
+	mc.er.AddListener("DataSourceDiscovered", func(eventData interface{}) {
+		mc.SubscribeToDataEvent(eventData.(string))
 	})
-	return &dc
+	return &mc
 }
 
 func (mc *MetricConsumer) SubscribeToDataEvent(eventName string) {
@@ -36,17 +38,17 @@ func (mc *MetricConsumer) SubscribeToDataEvent(eventName string) {
 			return
 		}
 	}
-
 	callback := mc.callbackGenerator()
 
 	mc.er.AddListener("MessageReceived_"+eventName, callback)
 }
 
 func (mc *MetricConsumer) callbackGenerator() func(interface{}) {
+
 	buf := new(bytes.Buffer)
-	rc := monitoring.NewReadingCounter()
 
 	return func(eventData interface{}) {
+
 		ed := eventData.(EventData)
 
 		sm := dto.SensorMessage{
@@ -65,7 +67,7 @@ func (mc *MetricConsumer) callbackGenerator() func(interface{}) {
 		err := mc.ch.Publish("", qutils.LiveReadingsQueue, false, false, msg)
 
 		if err == nil {
-			rc.Increment("coordinator", ed.Name)
+			mc.rc.Increment("coordinator", ed.Name)
 		}
 
 	}
