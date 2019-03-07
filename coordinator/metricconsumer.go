@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"github.com/distributed-go/dto"
+	"github.com/distributed-go/monitoring"
 	"github.com/distributed-go/qutils"
 	"github.com/streadway/amqp"
 )
@@ -43,6 +44,7 @@ func (mc *MetricConsumer) SubscribeToDataEvent(eventName string) {
 
 func (mc *MetricConsumer) callbackGenerator() func(interface{}) {
 	buf := new(bytes.Buffer)
+	rc := monitoring.NewReadingCounter()
 
 	return func(eventData interface{}) {
 		ed := eventData.(EventData)
@@ -63,7 +65,7 @@ func (mc *MetricConsumer) callbackGenerator() func(interface{}) {
 		err := mc.ch.Publish("", qutils.LiveReadingsQueue, false, false, msg)
 
 		if err == nil {
-
+			rc.Increment(ed.Name)
 		}
 
 	}
