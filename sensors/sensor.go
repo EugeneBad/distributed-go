@@ -27,7 +27,7 @@ var value float64
 var nom float64
 
 func main() {
-	go monitoring.RuntimeMetricExporter()
+	go monitoring.MetricExporter()
 	flag.Parse()
 	value = r.Float64()*(*max-*min) + *min
 	nom = (*max-*min)/2 + *min

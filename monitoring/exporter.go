@@ -11,7 +11,7 @@ type ReadingCounter struct {
 	prometheus.CounterVec
 }
 type ReadingCounterInterface interface {
-	Increment(string)
+	Increment(string, string)
 }
 
 func NewReadingCounter() ReadingCounterInterface {
@@ -20,12 +20,12 @@ func NewReadingCounter() ReadingCounterInterface {
 	rc.CounterVec = *promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "coordinator_reading_count",
 		Help: "The total number of processed readings by the coordinator"},
-		[]string{"sensor"})
+		[]string{"layer", "sensor"})
 
 	return &rc
 }
 
-func (rc *ReadingCounter) Increment(sensor string) {
+func (rc *ReadingCounter) Increment(layer, sensor string) {
 	rc.With(prometheus.Labels{"sensor": sensor})
 }
 

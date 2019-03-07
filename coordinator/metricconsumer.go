@@ -65,7 +65,7 @@ func (mc *MetricConsumer) callbackGenerator() func(interface{}) {
 		err := mc.ch.Publish("", qutils.LiveReadingsQueue, false, false, msg)
 
 		if err == nil {
-			rc.Increment(ed.Name)
+			rc.Increment("coordinator", ed.Name)
 		}
 
 	}
