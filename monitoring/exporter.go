@@ -10,8 +10,17 @@ import (
 type ReadingCounter struct {
 	prometheus.CounterVec
 }
+
 type ReadingCounterInterface interface {
 	Increment(string, string)
+}
+
+type ReadingGauge struct {
+	prometheus.GaugeVec
+}
+
+type ReadingGaugeInterface interface {
+	Set(float64, string)
 }
 
 func NewReadingCounter() ReadingCounterInterface {
@@ -27,6 +36,22 @@ func NewReadingCounter() ReadingCounterInterface {
 
 func (rc *ReadingCounter) Increment(layer, sensor string) {
 	rc.With(prometheus.Labels{"layer": layer, "sensor": sensor}).Inc()
+}
+
+func NewReadingGauge() ReadingGaugeInterface {
+	var rg ReadingGauge
+
+	rg.GaugeVec = *promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "sensor_reading",
+		Help: "The current reading from the sensor"},
+		[]string{"sensor"})
+
+	return &rg
+
+}
+
+func (rg *ReadingGauge) Set(value float64, sensor string) {
+	rg.With(prometheus.Labels{"sensor": sensor}).Set(value)
 }
 
 func MetricExporter() {
