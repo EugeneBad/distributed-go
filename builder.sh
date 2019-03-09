@@ -12,6 +12,12 @@ build_coordinator() {
     cd -
 }
 
+build_metric_manager(){
+    cd $(pwd)/monitoring/exec
+    GOOS=linux GOARCH=amd64 go build -o metricmanager
+    cd -
+}
+
 docker_compose(){
     docker-compose up -d --build
 }
@@ -19,6 +25,8 @@ docker_compose(){
 main (){
     build_sensors
     build_coordinator
+    build_metric_manager
+
     docker_compose
 }
 

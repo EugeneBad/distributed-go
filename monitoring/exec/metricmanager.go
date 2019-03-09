@@ -26,6 +26,9 @@ func main() {
 	if err != nil {
 		log.Fatalln("Failed to get access to messages")
 	}
+
+	go monitoring.MetricExporter()
+
 	rg := monitoring.NewReadingGauge()
 
 	for msg := range msgs {
