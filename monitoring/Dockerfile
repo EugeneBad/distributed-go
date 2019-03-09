@@ -1,3 +1,4 @@
-FROM prom/prometheus
-WORKDIR /etc/prometheus
-COPY prometheus.yml .
+FROM golang
+WORKDIR /go/src/app
+COPY exec/metricmanager .
+ENTRYPOINT ./metricmanager

@@ -62,8 +62,12 @@ services:
     network_mode: "service:rabbit"
     restart: on-failure
 
-  prometheus:
+  monitoring:
     build:
       context: ./monitoring
+
+  prometheus:
+    build:
+      context: ./prometheus
     ports:
       - "9091:9090"
