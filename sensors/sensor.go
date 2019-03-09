@@ -86,6 +86,9 @@ func main() {
 			Body: buf.Bytes(),
 		}
 
+		delay := rand.Intn(400)
+		time.Sleep(time.Duration(delay) * time.Millisecond)
+
 		_ = ch.Publish("", dataQueue.Name, false, false, msg)
 
 		log.Printf("%s Reading Sent. Value: %v\n", *name, value)
