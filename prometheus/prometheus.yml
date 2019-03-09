@@ -34,3 +34,8 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['coordinator:2112']
+
+  - job_name: monitoring
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['monitoring:2112']

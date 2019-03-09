@@ -65,6 +65,7 @@ services:
   monitoring:
     build:
       context: ./monitoring
+    restart: on-failure
 
   prometheus:
     build:
