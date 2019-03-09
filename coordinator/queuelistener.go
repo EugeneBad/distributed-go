@@ -7,6 +7,8 @@ import (
 	"github.com/distributed-go/dto"
 	"github.com/distributed-go/qutils"
 	"github.com/streadway/amqp"
+	"math/rand"
+	"time"
 )
 
 const url = qutils.BrokerUrl
@@ -91,5 +93,7 @@ func (ql *QueueListener) AddListener(msgs <-chan amqp.Delivery) {
 		ql.ea.PublishEvent("MessageReceived_"+msg.RoutingKey, ed)
 
 		fmt.Printf("Received message: %v\n", sd)
+		delay := rand.Intn(400)
+		time.Sleep(time.Duration(delay) * time.Millisecond)
 	}
 }
