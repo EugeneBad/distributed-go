@@ -7,6 +7,7 @@ import (
 	"github.com/distributed-go/monitoring"
 	"github.com/distributed-go/qutils"
 	"github.com/streadway/amqp"
+	"time"
 )
 
 type MetricConsumer struct {
@@ -44,31 +45,32 @@ func (mc *MetricConsumer) SubscribeToDataEvent(eventName string) {
 }
 
 func (mc *MetricConsumer) callbackGenerator() func(interface{}) {
-
+	prevTime := time.Unix(0, 0)
 	buf := new(bytes.Buffer)
 
 	return func(eventData interface{}) {
-
 		ed := eventData.(EventData)
 
-		sm := dto.SensorMessage{
-			Name:      ed.Name,
-			Value:     ed.Value,
-			Timestamp: ed.Timestamp,
+		if time.Since(prevTime) > 700*time.Millisecond {
+			prevTime = time.Now()
+			sm := dto.SensorMessage{
+				Name:      ed.Name,
+				Value:     ed.Value,
+				Timestamp: ed.Timestamp,
+			}
+			buf.Reset()
+			enc := gob.NewEncoder(buf)
+			_ = enc.Encode(sm)
+
+			msg := amqp.Publishing{
+				Body: buf.Bytes(),
+			}
+
+			err := mc.ch.Publish("", qutils.LiveReadingsQueue, false, false, msg)
+
+			if err == nil {
+				mc.rc.Increment("coordinator", ed.Name)
+			}
 		}
-		buf.Reset()
-		enc := gob.NewEncoder(buf)
-		_ = enc.Encode(sm)
-
-		msg := amqp.Publishing{
-			Body: buf.Bytes(),
-		}
-
-		err := mc.ch.Publish("", qutils.LiveReadingsQueue, false, false, msg)
-
-		if err == nil {
-			mc.rc.Increment("coordinator", ed.Name)
-		}
-
 	}
 }
