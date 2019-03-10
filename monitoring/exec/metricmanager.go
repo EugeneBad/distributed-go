@@ -21,7 +21,7 @@ func main() {
 		qutils.LiveReadingsQueue,
 		"",
 		false,
-		true,
+		false,
 		false,
 		false,
 		nil)
