@@ -8,6 +8,17 @@ services:
       - "5671:5671"
       - "9090:9090"
 
+  prometheus:
+    build:
+      context: ./prometheus
+    ports:
+      - "9091:9090"
+
+  monitoring:
+    build:
+      context: ./monitoring
+    restart: on-failure
+
   coordinator:
     build:
       context: ./coordinator
@@ -61,14 +72,3 @@ services:
     image: kbudde/rabbitmq-exporter
     network_mode: "service:rabbit"
     restart: on-failure
-
-  monitoring:
-    build:
-      context: ./monitoring
-    restart: on-failure
-
-  prometheus:
-    build:
-      context: ./prometheus
-    ports:
-      - "9091:9090"

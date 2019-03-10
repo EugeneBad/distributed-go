@@ -7,6 +7,8 @@ import (
 	"github.com/distributed-go/monitoring"
 	"github.com/distributed-go/qutils"
 	"log"
+	"math/rand"
+	"time"
 )
 
 const url = qutils.BrokerUrl
@@ -29,6 +31,8 @@ func main() {
 
 	go monitoring.MetricExporter()
 
+	rc := monitoring.NewReadingCounter()
+
 	rg := monitoring.NewReadingGauge()
 
 	for msg := range msgs {
@@ -39,11 +43,14 @@ func main() {
 		_ = dec.Decode(sd)
 
 		rg.Set(sd.Value, sd.Name)
+		rc.Increment("monitoring", sd.Name)
 
 		if err != nil {
 			log.Printf("Failed to save reading from sensor %v. Error: %s", sd.Name, err.Error())
 		} else {
 			_ = msg.Ack(false)
 		}
+
+		time.Sleep(time.Duration(rand.Intn(400)) * time.Millisecond) // Delay to simulate network latency
 	}
 }
