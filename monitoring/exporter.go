@@ -23,14 +23,6 @@ type ReadingGaugeInterface interface {
 	Set(float64, string)
 }
 
-type SensorStatus struct {
-	prometheus.GaugeVec
-}
-
-type SensorStatusInterface interface {
-	Set(float64, string)
-}
-
 func NewReadingCounter() ReadingCounterInterface {
 	var rc ReadingCounter
 
@@ -60,22 +52,6 @@ func NewReadingGauge() ReadingGaugeInterface {
 
 func (rg *ReadingGauge) Set(value float64, sensor string) {
 	rg.With(prometheus.Labels{"sensor": sensor}).Set(value)
-}
-
-func NewSensorStatus() SensorStatusInterface {
-	var ss SensorStatus
-
-	ss.GaugeVec = *promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Name: "sensor_reading",
-		Help: "The current reading from the sensor"},
-		[]string{"sensor"})
-
-	return &ss
-
-}
-
-func (ss *SensorStatus) Set(value float64, sensor string) {
-	ss.With(prometheus.Labels{"sensor": sensor}).Set(value)
 }
 
 func MetricExporter() {
