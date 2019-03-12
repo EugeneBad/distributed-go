@@ -72,3 +72,14 @@ services:
     image: kbudde/rabbitmq-exporter
     network_mode: "service:rabbit"
     restart: on-failure
+
+  cadvisor:
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  node-exporter:
+    image: prom/node-exporter:latest
