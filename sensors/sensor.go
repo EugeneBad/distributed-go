@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/distributed-go/dto"
+	"github.com/distributed-go/monitoring"
 	"github.com/distributed-go/qutils"
 	"github.com/streadway/amqp"
 	"log"
@@ -14,7 +15,7 @@ import (
 	"time"
 )
 
-var url = "amqp://guest@localhost:5672"
+var url = qutils.BrokerUrl
 var name = flag.String("name", "sensor", "name of the sensor")
 var freq = flag.Uint("freq", 5, "frequency in cycle/sec")
 var max = flag.Float64("max", 5., "maximum value for generated reading")
@@ -26,6 +27,7 @@ var value float64
 var nom float64
 
 func main() {
+	go monitoring.MetricExporter()
 	flag.Parse()
 	value = r.Float64()*(*max-*min) + *min
 	nom = (*max-*min)/2 + *min
@@ -41,6 +43,15 @@ func main() {
 	//sensorQueue := qutils.GetQueue(qutils.SensorListQueue, ch)
 	publishQueueName(ch)
 	discoveryQueue := qutils.GetQueue("", ch, true)
+
+	_ = ch.ExchangeDeclare(
+		qutils.SensorDiscoveryExchange,
+		"fanout",
+		false,
+		false,
+		false,
+		false,
+		nil)
 
 	_ = ch.QueueBind(
 		discoveryQueue.Name,
@@ -74,6 +85,9 @@ func main() {
 		msg := amqp.Publishing{
 			Body: buf.Bytes(),
 		}
+
+		delay := rand.Intn(400)
+		time.Sleep(time.Duration(delay) * time.Millisecond)
 
 		_ = ch.Publish("", dataQueue.Name, false, false, msg)
 

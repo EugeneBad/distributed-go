@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"github.com/distributed-go/coordinator"
+	"github.com/distributed-go/monitoring"
 )
 
 func main() {
 	ea := coordinator.NewEventAggregator()
 	_ = coordinator.NewDatabaseConsumer(ea)
+	_ = coordinator.NewMetricConsumer(ea)
 
 	ql := coordinator.NewQueueListener(ea)
 	go ql.ListenForNewSource()
 
-	var a string
-	_, _ = fmt.Scanln(&a)
+	monitoring.MetricExporter()
 }
