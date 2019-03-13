@@ -27,7 +27,7 @@ func NewReadingCounter() ReadingCounterInterface {
 	var rc ReadingCounter
 
 	rc.CounterVec = *promauto.NewCounterVec(prometheus.CounterOpts{
-		Name: "coordinator_reading_count",
+		Name: "reading_count",
 		Help: "The total number of processed readings by the coordinator"},
 		[]string{"layer", "sensor"})
 

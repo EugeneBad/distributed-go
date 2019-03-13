@@ -2,17 +2,10 @@ version: '3'
 services:
   rabbit:
     image: rabbitmq:3-management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-      - "5671:5671"
-      - "9090:9090"
 
   prometheus:
     build:
       context: ./prometheus
-    ports:
-      - "9091:9090"
 
   monitoring:
     build:
@@ -73,13 +66,11 @@ services:
     network_mode: "service:rabbit"
     restart: on-failure
 
-  cadvisor:
-    image: google/cadvisor:latest
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+  grafana:
+    image: eugenebad/dist-grafana:v1
+    ports:
+      - "3000:3000"
+    restart: on-failure
 
   node-exporter:
     image: prom/node-exporter:latest

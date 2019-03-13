@@ -43,4 +43,4 @@ scrape_configs:
   - job_name: runtime-metrics
     metrics_path: /metrics
     static_configs:
-      - targets: ['cadvisor:8080', 'node-exporter:9100', 'host.docker.internal:50501']
+      - targets: ['node-exporter:9100', 'host.docker.internal:50501']
