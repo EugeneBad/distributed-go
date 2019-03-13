@@ -1,7 +1,7 @@
 # Monitoring A Distributed Go Application
 This project serves as a demonstration of how the concepts of distributed architecture can be applied to a Go application. 
 The application its self simulates the sensors monitoring an industrial grade boiler in an ore purifying facility; and we do this by leveraging as many core Go concepts (concurrency: channels, goroutines etc) as possible.
-The application is then packaged into docker containers; which have become the de facto industry standard for building micro-service based distributed systems. This allows for decoupling such that individual tiers of the architecture can be independently scaled out to much demand at a given time.
+The application is then packaged into docker containers; which have become the de facto industry standard for building micro-service based distributed systems. This allows for decoupling such that individual tiers of the architecture can be independently scaled out to match demand at a given time.
 
 ## Tech Stack
 * [RabbitMq](https://www.rabbitmq.com/): [Erlang](https://www.erlang.org/) powered message broker.
